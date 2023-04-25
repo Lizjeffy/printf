@@ -3,68 +3,59 @@
 /**
  * _printf - produces output according to a format
  * @format: character string
+ * @...: var
  * Return: number of characters printed
  */
 
 int _printf(const char *format, ...)
 {
+	check_match chk[] = {
+		{"%s", putstrng}, {"%%", putper}, {"%b", putbin}, {"%c", print_char}
+	};
+
 	va_list args;
-	int prc;
-	int c;
 	int x;
+	int index;
+	int sizeof_ch;
+	int length;
 
 	va_start(args, format);
+	sizeof_ch = sizeof(chk) / sizeof(chk[0]);
+	length = 0;
+	x = 0;
+	index = 0;
 
-	prc = 0;
-
-	while (*format)
+	if (format == NULL)
+		return (-1);
+	while (format[x] != '\0')
 	{
-		if (*format == '%')
+		if (format[x] == '%' && format[x + 1] == '\0')
+			return (-1);
+		if (format[x] == '%')
 		{
-			format++;
-			switch (*format)
+			while (index < sizeof_ch)
 			{
-				case 'c':
-					c = va_arg(args, int);
-					putchar(c);
-					prc++;
-					break;
-				case 's':
+				if (format[x + 1] == *(chk[index].id + 1))
 				{
-					char *str = va_arg(args, char *);
-					for (x = 0; str[x] != '\0'; x++)
-					{
-						putchar(str[x]);
-						prc++;
-					}
+					length = length + chk[index].func(args);
+					x = x + 1;;
 					break;
 				}
-				case '%':
-					putchar('%');
-					prc++;
-					break;
-				case 'd':
-					putchar('d');
-					prc++;
-					break;
-				case 'i':
-					putchar('i');
-					prc++;
-					break;
-				default:
-					putchar('%');
-					putchar(*format);
-					prc = prc + 2;
-					break;
+			}
+			index++;
+			if (index == sizeof_ch)
+			{
+				_putchar(format[x]);
+				length++;
 			}
 		}
 		else
 		{
-			putchar(*format);
-			prc++;
+			_putchar(*format);
+			length++;
 		}
-		format++;
 	}
+	x++;
 	va_end(args);
-	return (prc);
+	return (length);
 }
