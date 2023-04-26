@@ -9,10 +9,10 @@
 int putint(va_list list)
 {
 	int num;
-       	int tmp;
-       	int len;
-       	int x;
-       	int outlen;
+	int tmp;
+	int len;
+	int x;
+	int outlen;
 	char *c;
 
 	num = va_arg(list, int);
